@@ -1,0 +1,115 @@
+.main {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  top: 0;
+  left: 0;
+  /* background-color: rgb(183, 227, 242); */
+}
+
+#background-img {
+  width: 100%;
+  height: auto;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 99%;
+  height: 12%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  font-family: "Pacifico", cursive; /* Fancy font */
+  box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.5); /* Bottom shadowy border */
+  background-color: white;
+  color: black;
+  z-index: 10;
+}
+
+.left-nav {
+  height: 100%;
+  width: 20%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.center-nav {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.right-nav {
+  height: 100%;
+  width: 30%;
+  display: flex;
+  align-items: center;
+}
+.nav-login {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+#stitch-nav-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  width: auto;
+  margin-top: -1%;
+  margin-right: 7%;
+}
+#profile-img {
+  height: 60px;
+  width: auto;
+  border-radius: 100px;
+  margin-left: 20px;
+}
+#nav-title {
+  font-size: 35px; /* Increase font size */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for depth */
+  letter-spacing: 2px;
+  margin: 0;
+  background: linear-gradient(
+    to right,
+    violet,
+    rgb(130, 44, 192),
+    rgb(109, 109, 237),
+    rgb(18, 154, 18),
+    yellow,
+    orange,
+    rgb(253, 72, 72)
+  );
+  -webkit-background-clip: text; /* Clip text to background */
+  background-clip: text; /* Clip text to background (for compatibility) */
+  -webkit-text-fill-color: transparent; /* Make text transparent */
+  color: transparent; /* Make text transparent (fallback for older browsers) */
+}
+#nav-subtitle {
+  font-size: 20px; /* Increase font size */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for depth */
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+#title {
+  font-size: 40px;
+  font-weight: 500;
+}
+#subtitle {
+  font-size: 20px;
+  font-weight: 300;
+}
+
+#footer-icon {
+  width: 80px;
+  height: auto;
+}

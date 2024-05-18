@@ -1,0 +1,95 @@
+.login-main {
+  width: 100%;
+  background-color: lightblue;
+  color: white;
+}
+
+#user-img-1 {
+    width: 200px; /* Make sure width and height are the same */
+    height: 200px; /* Added */
+    border-radius: 50%;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+#user-img-2 {
+    width: 200px; /* Make sure width and height are the same */
+    height: 200px; /* Added */
+    border-radius: 50%;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 5%;
+    margin-bottom: 5%;
+}
+
+#paper1 {
+    position: absolute;
+    top: 20%;
+    left: 25%;
+}
+#paper2 {
+    position: absolute;
+    bottom: 25%;
+    right: 30%;
+}
+#paper3 {
+    position: absolute;
+    top: 40%;
+    left: 47.5%;
+}
+
+.login-mid {
+    position: relative;
+  margin-top: 50px;
+  width: 100%;
+  height: 400px;
+  background-color: rgb(101, 196, 228);
+}
+
+.login-container {
+  width: 50%;
+  height: 50vh;
+  margin: 0 auto;
+  justify-content: center;
+  text-align: center;
+}
+
+#login-btn {
+  width: 200px;
+}
+
+#signup-link {
+  margin-top: 3%;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.signup-container {
+  width: 50%;
+  height: 60vh;
+  margin: 0 auto;
+  justify-content: center;
+  text-align: center;
+}
+
+.form-container {
+  width: 70%;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.form-split {
+  display: flex;
+  justify-content: center;
+}
+
+.form-split p {
+  width: 40%;
+}
+
+.form-split input {
+  width: 100%;
+  height: 50%;
+}
