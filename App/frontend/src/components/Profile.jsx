@@ -1,8 +1,49 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/Profile.css";
+import Cookies from "js-cookie";
 
 function Profile() {
-  return (
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const logout = () => {
+    Cookies.set("loggedIn", "false"); // Note: 'false' as a string
+    Cookies.remove("username");
+
+    // Wait for cookies to be set and then navigate
+    setTimeout(() => {
+      navigate("/login");
+    }, 100); // Adjust the delay as needed
+  };
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:8000/api/users/${Cookies.get("username")}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            setUser(data);
+            setLoading(false);
+          } else {
+            alert(data.message);
+          }
+        });
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
+  }, []);
+
+  return loading ? (
+    <p>Loading</p>
+  ) : (
     <div className="profile-main">
       <div className="left-container">
         <div className="display-container">
@@ -13,13 +54,16 @@ function Profile() {
             />
           </div>
           <div style={{ marginTop: "12%" }}></div>
-          <p id="title">username</p>
-          <p id="subtitle">firstname lastname</p>
+          <p id="title">{user.username}</p>
+          <p id="subtitle">{user.firstname} {user.lastname}</p>
           <div className="user-stats">
             <div style={{ paddingTop: "10%" }}></div>
-            <p id="subtitle">Contributed to X stories</p>
+            <p id="subtitle">Contributed to {user.stories_count} stories</p>
             <p id="subtitle">#X user in the world</p>
           </div>
+          <button id="logout-btn" className="btn btn-danger" onClick={logout}>
+            Log out
+          </button>
         </div>
       </div>
       <div className="right-container">
@@ -68,66 +112,21 @@ function Profile() {
             <img src="../src/assets/notepad.png" id="notepad-img" />
             <div className="story-title">Title for Story 1</div>
             <div className="story-text-container">
-              <div className="story-text">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
+              <div className="story-text"></div>
             </div>
           </div>
           <div className="story2">
             <img src="../src/assets/notepad.png" id="notepad-img" />
             <div className="story-title">Title for Story 2</div>
             <div className="story-text-container">
-              <div className="story-text">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
+              <div className="story-text"></div>
             </div>
           </div>
           <div className="story3">
             <img src="../src/assets/notepad.png" id="notepad-img" />
             <div className="story-title">Title for Story 3</div>
             <div className="story-text-container">
-              <div className="story-text">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
+              <div className="story-text"></div>
             </div>
           </div>
         </div>

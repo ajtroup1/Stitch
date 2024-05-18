@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import *
-
+from django.db import transaction
+import requests
+import json
 
 class GetUsers(APIView):
     def get(self, request):
@@ -13,6 +15,21 @@ class GetUsers(APIView):
             return Response({"No users"}, status=status.HTTP_204_NO_CONTENT)
         else:
             serializer = UserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+class GetUserByName(APIView):
+    def get(self, request, username):
+        user = User.objects.filter(username=username).first()
+        if not user:
+            return Response({f"No user found with username: {username}"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            response = requests.get(f"http://127.0.0.1:8000/api/user-stories/{user.id}")
+            if response.status_code == 200:
+                stories_count = len(response.json())
+            else:
+                stories_count = 0
+            
+            serializer = UserSerializer(user, context={'stories_count': stories_count})
             return Response(serializer.data, status=status.HTTP_200_OK)
         
 class ValidateUser(APIView):
@@ -101,34 +118,86 @@ class DeleteUser(APIView):
         
         return Response({f"User #{id} delted"}, status=status.HTTP_200_OK)
     
+class GetStories(APIView):
+    def get(self, request):
+        stories = Story.objects.all()
+        if not stories:
+            return Response({"No stories"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer = StorySerializer(stories, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+class GetUserStories(APIView):
+    def get(self, request, user):
+        fragments = Fragment.objects.filter(user=user)
+        if not fragments:
+            return Response({"No fragments for user"}, status=status.HTTP_204_NO_CONTENT)
+        
+        unique_story_ids = fragments.values_list('story_id', flat=True).distinct()
+        stories = []
+        for id in unique_story_ids:
+            story = Story.objects.filter(id=id).first()
+            if story:
+                stories.append(story)
+
+        serializer = StorySerializer(stories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GetFragments(APIView):
+    def get(self, request):
+        fragments = Fragment.objects.all()
+        if not fragments:
+            return Response({"No fragments"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer = FragmentSerializer(fragments, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+class FlushFragments(APIView):
+    def delete(self, request):
+        fragments = Fragment.objects.all()
+        if not fragments:
+            return Response({"No fragments"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            fragments.delete()
+            return Response({"message": "All fragments flushed"}, status=status.HTTP_200_OK)
+        
+class FlushStories(APIView):
+    def delete(self, request):
+        stories = Story.objects.all()
+        if not stories:
+            return Response({"No stories"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            stories.delete()
+            return Response({"message": "All stories flushed"}, status=status.HTTP_200_OK)
 
 class InitializeStory(APIView):
     def post(self, request):
         userID = request.data.get('userID')
         text = request.data.get('text')
         title = request.data.get('title')
+        description = request.data.get('description')
 
         users = User.objects.filter(id=userID)
 
-        if userID == None or text == "" or title == "":
-            return Response({f"Please fill out all relevant fields"}, status=status.HTTP_400_BAD_REQUEST)
+        if userID is None or text == "" or title == "":
+            return Response({"message": "Please fill out all relevant fields"}, status=status.HTTP_400_BAD_REQUEST)
         
-        if len(users) < 1:
-            return Response({f"No users with ID"}, status=status.HTTP_400_BAD_REQUEST)
-        elif len(users) > 1:
-            return Response({f"Nonunique user ID"}, status=status.HTTP_400_BAD_REQUEST)
+        if not users.exists():
+            return Response({"message": "No users with ID"}, status=status.HTTP_400_BAD_REQUEST)
+        elif users.count() > 1:
+            return Response({"message": "Nonunique user ID"}, status=status.HTTP_400_BAD_REQUEST)
         
         user = users.first()
 
-        fragment = Fragment(user=user, text=text)
-        fragment.save()
+        
+        with transaction.atomic(): # all code either succeeds or fails together
+            fragment = Fragment.objects.create(user=user, text=text)
 
-        # INITIALIZE THE STORY TOO AFTER THE FRAGMENT
+            story = Story.objects.create(title=title, description=description)
+            story.fragments.add(fragment)  # Add the fragment to the story
+            story.save()
 
-        return Response({f"Story initialized"}, status=status.HTTP_200_OK)
-    
-class Temp(APIView):
-    def get(self, request):
-        fragments = Fragment.objects.all()
-        fragments.delete()
-        return Response({f"ok"}, status=status.HTTP_200_OK)
+            fragment.story_id = story.id  # Assign the story's ID to fragment's story_id
+            fragment.save()
+
+        return Response({"message": "Story initialized"}, status=status.HTTP_200_OK)

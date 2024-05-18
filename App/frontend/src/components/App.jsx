@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Home.jsx";
+import Cookies from "js-cookie";
 import "../css/App.css";
 import Login from "./Login.jsx";
 import Profile from "./Profile.jsx";
@@ -8,7 +9,25 @@ import Browse from "./Browse.jsx";
 import Create from "./Create.jsx";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(Cookies.get("loggedIn"));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const updatedLoggedIn = Cookies.get("loggedIn");
+      if (updatedLoggedIn !== loggedIn) {
+        setLoggedIn(updatedLoggedIn);
+      }
+    }, 1000); // Check every second, adjust as needed
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [loggedIn]);
+
+  useEffect(() => {
+    console.log(loggedIn)
+  }, [loggedIn]);
+
   return (
     <Router>
       <div className="main">
@@ -37,12 +56,11 @@ function App() {
               </a>
             </div>
             <div id="right-nav">
-              {loggedIn ? (
+              {loggedIn === "true" ? (
                 <div className="nav-login">
                   <a href="/profile">
-                    <p id="nav-subtitle">username</p>
+                    <p id="nav-subtitle">{Cookies.get("username")}</p>
                   </a>
-
                   <a href="/profile">
                     <img
                       src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"

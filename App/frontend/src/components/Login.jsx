@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/Login.css";
+import Cookies from "js-cookie";
 
 function Login() {
+  const navigate = useNavigate();
   const [loginInput, setLoginInput] = useState({
     username: "",
     password: "",
@@ -13,6 +16,15 @@ function Login() {
     password: "",
     confpassword: "",
   });
+  const [routeUser, setRouteUser] = useState();
+
+  useEffect(() => {
+    if (routeUser) {
+      Cookies.set("username", routeUser);
+      Cookies.set("loggedIn", true);
+      navigate('/profile')
+    }
+  }, [routeUser]);
 
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,18 +47,18 @@ function Login() {
     fetch("http://127.0.0.1:8000/api/validate-user", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json", // Set content type to JSON
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(loginInput), // Convert loginInput to JSON string
+      body: JSON.stringify(loginInput),
     })
       .then((response) => {
         response.json().then((data) => {
-          if(response.status != 200) {
-            alert(data.message)
+          if (response.status === 200) {
+            setRouteUser(loginInput.username); // Set routeUser state on successful login
           } else {
-            //logcked in
+            alert(data.message);
           }
-        })
+        });
       })
       .catch((error) => {
         console.log("Error: ", error);
@@ -55,20 +67,19 @@ function Login() {
 
   const handleSignupSubmit = (e) => {
     e.preventDefault();
-    console.log(signupInput);
     fetch("http://127.0.0.1:8000/api/create-user", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json", // Set content type to JSON
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(signupInput), // Convert loginInput to JSON string
+      body: JSON.stringify(signupInput),
     })
       .then((response) => {
         response.json().then((data) => {
-          if (response.status != 200) {
-            alert(data.message);
+          if (response.status === 200) {
+            setRouteUser(signupInput.username); // Set routeUser state on successful signup
           } else {
-            alert("Account created successfully!")
+            alert(data.message);
           }
         });
       })
