@@ -8,11 +8,14 @@ urlpatterns = [
     path('validate-user', ValidateUser.as_view()),
     path('delete-user/<int:id>', DeleteUser.as_view()),
     path('initialize-story', InitializeStory.as_view()),
+    path('append-story/<int:id>', AppendStory.as_view(), name='append-story'),
     path('stories', GetStories.as_view()),
     path('fragments', GetFragments.as_view()),
     path('user-stories/<str:user>', GetUserStories.as_view()),
+    path('3-user-stories/<int:id>', Get3UserStories.as_view()),
 
     # only for development delete later
     path('flush-fragments', FlushFragments.as_view()),
+    path('delete-fragment/<int:id>', DeleteFragment.as_view()),
     path('flush-stories', FlushStories.as_view()),
 ]

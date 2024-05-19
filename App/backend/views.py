@@ -6,7 +6,6 @@ from rest_framework import status
 from .serializers import *
 from django.db import transaction
 import requests
-import json
 
 class GetUsers(APIView):
     def get(self, request):
@@ -131,7 +130,7 @@ class GetUserStories(APIView):
     def get(self, request, user):
         fragments = Fragment.objects.filter(user=user)
         if not fragments:
-            return Response({"No fragments for user"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"No stories for user"}, status=status.HTTP_204_NO_CONTENT)
         
         unique_story_ids = fragments.values_list('story_id', flat=True).distinct()
         stories = []
@@ -141,6 +140,33 @@ class GetUserStories(APIView):
                 stories.append(story)
 
         serializer = StorySerializer(stories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class Get3UserStories(APIView):
+    def get(self, request, id):
+        # Get the most recent 3 fragments associated with the user, ordered by their ids in descending order
+        recent_fragments = Fragment.objects.filter(user=id).order_by('-id')[:3]
+        
+        if not recent_fragments:
+            return Response({"No stories found for this user"}, status=status.HTTP_204_NO_CONTENT)
+        
+        # Get the unique story ids from the recent fragments
+        unique_story_ids = recent_fragments.values_list('story_id', flat=True)
+        stories = []
+        
+        # Retrieve the stories associated with the unique story ids
+        for story_id in unique_story_ids:
+            story = Story.objects.filter(id=story_id).first()
+            if story:
+                stories.append(story)
+        
+        # Sort the stories by date_modified in descending order
+        sorted_stories = sorted(stories, key=lambda x: x.date_modified, reverse=True)
+        
+        # Get the first 3 sorted stories
+        first_3_stories = sorted_stories[:3]
+        
+        serializer = StorySerializer(first_3_stories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GetFragments(APIView):
@@ -160,6 +186,15 @@ class FlushFragments(APIView):
         else:
             fragments.delete()
             return Response({"message": "All fragments flushed"}, status=status.HTTP_200_OK)
+
+class DeleteFragment(APIView):
+    def delete(self, request, id):
+        fragment = Fragment.objects.filter(id=id).first()
+        if not fragment:
+            return Response({"No fragments"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            fragment.delete()
+            return Response({"message": f"Fragment #{id} deleted"}, status=status.HTTP_200_OK)
         
 class FlushStories(APIView):
     def delete(self, request):
@@ -201,3 +236,26 @@ class InitializeStory(APIView):
             fragment.save()
 
         return Response({"message": "Story initialized"}, status=status.HTTP_200_OK)
+    
+class AppendStory(APIView):
+    def post(self, request, id):
+        story = Story.objects.filter(id=id).first()
+        if not story:
+            return Response({"No stories"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer = StorySerializer(story)
+            user_id = request.data.get('userID')
+            text = request.data.get('text')
+
+            user = User.objects.filter(id=user_id).first()
+            
+            fragment = Fragment(user=user, text=text, story_id=id)
+            fragment.save()
+           
+            story.fragments.add(fragment)
+
+            story.date_modified = timezone.now().date()
+
+            story.save()
+
+            return Response({"Appended story":serializer.data}, status=status.HTTP_200_OK)
