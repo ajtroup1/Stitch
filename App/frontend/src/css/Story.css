@@ -2,7 +2,7 @@
   width: 100%;
   height: 100%;
   color: black;
-  background-color: rgb(245, 245, 197);
+  background-color: rgb(200, 246, 115);
 }
 
 .top-half-2 {
@@ -45,16 +45,16 @@
 }
 
 .profile-photos {
-    width: 30%;
-    height: 50%;
-    display: flex;
-    justify-content: center;
+  width: 30%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
 }
 
 #profile-pic-story-mini {
-    height: 30px;
-    width: auto;
-    border-radius: 50%;
+  height: 30px;
+  width: auto;
+  border-radius: 50%;
 }
 
 .top-right {
@@ -120,4 +120,3 @@
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
   object-fit: cover; /* Ensures image fills the available space without stretching */
 }
-

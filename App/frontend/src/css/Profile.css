@@ -206,3 +206,11 @@
 #edit-story:hover {
   cursor: pointer;
 }
+
+#private-icon {
+  width: 25px;
+  height: auto;
+  position: absolute;
+  top: 6.5%;
+  right: 1%;
+}

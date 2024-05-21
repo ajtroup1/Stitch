@@ -34,6 +34,7 @@ function Profile() {
           if (response.status === 200) {
             setUser(data);
             setLoading(false);
+            Cookies.set("picURL", data.pic_url)
           } else {
             alert(data.message);
           }
@@ -75,6 +76,10 @@ function Profile() {
   const navToBrowse = () => {
     navigate("/browse");
   };
+  const navToEdit = () => {
+    Cookies.set("editingStory", true)
+    navigate("/editstory")
+  }
 
   const openModal = () => {
     setModalOpen(true);
@@ -178,7 +183,7 @@ function Profile() {
         <div className="right-container">
           <div style={{ paddingTop: "9%" }}></div>
           <div className="top-container">
-            <p id="subtitle" style={{ marginTop: "-1%" }}>
+            <p id="subtitle" style={{ marginTop: "1%" }}>
               There are currently {user.num_users} users creating right now!
             </p>
             <div className="profile-btns">
@@ -231,6 +236,7 @@ function Profile() {
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/2280/2280532.png"
                   id="edit-story"
+                  onClick={navToEdit}
                 />
               )}
               <div className="story-title">
@@ -243,6 +249,12 @@ function Profile() {
                 )}
                 {threeStories.length === 0 && (
                   <p>Create stories to get started!</p>
+                )}
+                {threeStories[0] && threeStories[0].private && (
+                  <img
+                    src="https://static.thenounproject.com/png/1694941-200.png"
+                    id="private-icon"
+                  />
                 )}
               </div>
               <div className="story-text-container">
@@ -270,6 +282,7 @@ function Profile() {
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/2280/2280532.png"
                   id="edit-story"
+                  onClick={navToEdit}
                 />
               )}
               <div className="story-title">
@@ -279,6 +292,12 @@ function Profile() {
                       ? threeStories[1].title.slice(0, 24) + "..."
                       : threeStories[1].title}
                   </p>
+                )}
+                {threeStories[1] && threeStories[1].private && (
+                  <img
+                    src="https://static.thenounproject.com/png/1694941-200.png"
+                    id="private-icon"
+                  />
                 )}
               </div>
               <div className="story-text-container">
@@ -301,6 +320,7 @@ function Profile() {
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/2280/2280532.png"
                   id="edit-story"
+                  onClick={navToEdit}
                 />
               )}
               <div className="story-title">
@@ -310,6 +330,12 @@ function Profile() {
                       ? threeStories[2].title.slice(0, 24) + "..."
                       : threeStories[2].title}
                   </p>
+                )}
+                {threeStories[2] && threeStories[2].private && (
+                  <img
+                    src="https://static.thenounproject.com/png/1694941-200.png"
+                    id="private-icon"
+                  />
                 )}
               </div>
               <div className="story-text-container">

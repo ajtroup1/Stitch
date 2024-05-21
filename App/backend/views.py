@@ -145,10 +145,14 @@ class DeleteUser(APIView):
 class GetStories(APIView):
     def get(self, request):
         stories = Story.objects.all()
-        if not stories:
-            return Response({"No stories"}, status=status.HTTP_204_NO_CONTENT)
+        nonprivate_stories = []
+        for story in stories:
+            if story.private == False:
+                nonprivate_stories.append(story)
+        if not nonprivate_stories:
+            return Response({"No non-private stories"}, status=status.HTTP_204_NO_CONTENT)
         else:
-            serializer = StorySerializer(stories, many=True)
+            serializer = StorySerializer(nonprivate_stories, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
 class GetStoryID(APIView):
@@ -280,7 +284,7 @@ class AppendStory(APIView):
         description = request.data.get('description')
         private = request.data.get('private')
 
-        user = User.objects.filter(id=user_id).first()
+        user = User.objects.filter(username=user_id).first()
 
         with transaction.atomic():  # All database operations in this block will succeed or fail together
             # Create a new story object based on the original story's information

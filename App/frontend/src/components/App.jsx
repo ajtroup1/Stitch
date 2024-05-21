@@ -8,6 +8,7 @@ import Profile from "./Profile.jsx";
 import Browse from "./Browse.jsx";
 import Create from "./Create.jsx";
 import Story from "./Story.jsx";
+import EditStory from "./EditStory.jsx";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(Cookies.get("loggedIn"));
@@ -64,7 +65,7 @@ function App() {
                   </a>
                   <a href="/profile">
                     <img
-                      src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+                      src={Cookies.get("picURL")}
                       id="profile-img"
                     />
                   </a>
@@ -91,6 +92,7 @@ function App() {
           <Route path="/browse" element={<Browse />} />
           <Route path="/create" element={<Create />} />
           <Route path="/story" element={<Story />} />
+          <Route path="/editstory" element={<EditStory />} />
         </Routes>
 
         <div className="container">

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/Story.css";
 import Cookies from "js-cookie";
 
 function Story() {
+  const navigate = useNavigate()
   const [story, setStory] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +30,12 @@ function Story() {
         console.log("Error: ", error);
       });
   }, []);
+
+  const handleNavToEditStory = () => {
+    Cookies.set("editing", false)
+    navigate("/editstory")
+  }
+
   return (
     <>
       {loading ? (
@@ -89,7 +97,7 @@ function Story() {
                   ))}
                 {story.fragments.length > 3 &&
                   `+${story.fragments.length - 3} more`}
-                <button className="btn btn-primary" id="add-part-btn">
+                <button className="btn btn-primary" id="add-part-btn" onClick={handleNavToEditStory}>
                   Add a fragment to this story!
                 </button>
               </div>
