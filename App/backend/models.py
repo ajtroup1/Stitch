@@ -21,3 +21,4 @@ class Story(models.Model):
     date_modified = models.DateField(default=timezone.now)
     description = models.CharField(max_length=200, null=True, default="No description listed")
     private = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)

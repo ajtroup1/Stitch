@@ -80,7 +80,11 @@
   padding: 30px;
 }
 
-.story-write-container textarea {
+#story-box {
   width: 100%; /* Span the width of the input */
-  height: 320px;
+  height: 200px;
+}
+
+#desc-container {
+  height: 100px !important;
 }

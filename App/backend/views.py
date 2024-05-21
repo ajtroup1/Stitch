@@ -15,10 +15,20 @@ class GetUsers(APIView):
         else:
             serializer = UserSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+# class GetNumUsers(APIView):
+#     def get(self, request):
+#         users = User.objects.all()
+#         if not users:
+#             return Response({"No users"}, status=status.HTTP_204_NO_CONTENT)
+#         else:
+#             count = len(users)
+#             return Response({"Users": count}, status=status.HTTP_200_OK)
         
 class GetUserByName(APIView):
     def get(self, request, username):
         user = User.objects.filter(username=username).first()
+        users = User.objects.all()
         if not user:
             return Response({f"No user found with username: {username}"}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -28,8 +38,23 @@ class GetUserByName(APIView):
             else:
                 stories_count = 0
             
-            serializer = UserSerializer(user, context={'stories_count': stories_count})
+            serializer = UserSerializer(user, context={'stories_count': stories_count, 'num_users': len(users)})
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
+class EditUser(APIView):
+    def put(self, request, id):
+        info = request.data
+
+        user = User.objects.filter(id=id).first()
+        
+        user.username = info['username']
+        user.firstname = info['firstname']
+        user.lastname = info['lastname']
+        user.pic_url = info['pic_url']
+
+        user.save()
+
+        return Response({"message": "Edited user successfully"}, status=status.HTTP_200_OK)
         
 class ValidateUser(APIView):
     def post(self, request):
@@ -177,15 +202,6 @@ class GetFragments(APIView):
         else:
             serializer = FragmentSerializer(fragments, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
-class FlushFragments(APIView):
-    def delete(self, request):
-        fragments = Fragment.objects.all()
-        if not fragments:
-            return Response({"No fragments"}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            fragments.delete()
-            return Response({"message": "All fragments flushed"}, status=status.HTTP_200_OK)
 
 class DeleteFragment(APIView):
     def delete(self, request, id):
@@ -199,10 +215,12 @@ class DeleteFragment(APIView):
 class FlushStories(APIView):
     def delete(self, request):
         stories = Story.objects.all()
+        fragments = Fragment.objects.all()
         if not stories:
             return Response({"No stories"}, status=status.HTTP_404_NOT_FOUND)
         else:
             stories.delete()
+            fragments.delete()
             return Response({"message": "All stories flushed"}, status=status.HTTP_200_OK)
 
 class InitializeStory(APIView):
@@ -211,8 +229,9 @@ class InitializeStory(APIView):
         text = request.data.get('text')
         title = request.data.get('title')
         description = request.data.get('description')
+        is_private = request.data.get('is_private')
 
-        users = User.objects.filter(id=userID)
+        users = User.objects.filter(username=userID)
 
         if userID is None or text == "" or title == "":
             return Response({"message": "Please fill out all relevant fields"}, status=status.HTTP_400_BAD_REQUEST)
@@ -228,7 +247,7 @@ class InitializeStory(APIView):
         with transaction.atomic(): # all code either succeeds or fails together
             fragment = Fragment.objects.create(user=user, text=text)
 
-            story = Story.objects.create(title=title, description=description)
+            story = Story.objects.create(title=title, description=description, user=user, private=is_private)
             story.fragments.add(fragment)  # Add the fragment to the story
             story.save()
 
@@ -239,23 +258,43 @@ class InitializeStory(APIView):
     
 class AppendStory(APIView):
     def post(self, request, id):
-        story = Story.objects.filter(id=id).first()
-        if not story:
-            return Response({"No stories"}, status=status.HTTP_204_NO_CONTENT)
-        else:
-            serializer = StorySerializer(story)
-            user_id = request.data.get('userID')
-            text = request.data.get('text')
+        original_story = Story.objects.filter(id=id).first()
+        
+        if not original_story:
+            return Response({"No stories"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = StorySerializer(original_story)
 
-            user = User.objects.filter(id=user_id).first()
-            
-            fragment = Fragment(user=user, text=text, story_id=id)
-            fragment.save()
-           
-            story.fragments.add(fragment)
+        user_id = request.data.get('userID')
+        text = request.data.get('text')
+        title = request.data.get('title')
+        description = request.data.get('description')
+        private = request.data.get('private')
 
-            story.date_modified = timezone.now().date()
+        user = User.objects.filter(id=user_id).first()
 
-            story.save()
+        with transaction.atomic():  # All database operations in this block will succeed or fail together
+            # Create a new story object based on the original story's information
+            new_story = Story.objects.create(
+                title=title,
+                description=description,
+                private=private,  # Copy other fields as needed
+                date_modified=timezone.now().date(),
+                user = user
+            )
 
-            return Response({"Appended story":serializer.data}, status=status.HTTP_200_OK)
+            # Create a new fragment representing the appended text
+            new_fragment = Fragment.objects.create(user=user, text=text, story_id=new_story.id)
+
+
+            # Copy the original fragments to the new story
+            for fragment in original_story.fragments.all():
+                new_story.fragments.add(fragment)
+
+            # Associate the new fragment with the new story
+            new_story.fragments.add(new_fragment)
+            new_story.save()
+
+            # Return the serialized data of the new story
+            new_story_serializer = StorySerializer(new_story)
+            return Response({"Appended story": new_story_serializer.data}, status=status.HTTP_200_OK)

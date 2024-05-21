@@ -54,7 +54,7 @@ function Login() {
       .then((response) => {
         response.json().then((data) => {
           if (response.status === 200) {
-            setRouteUser(loginInput.username); // Set routeUser state on successful login
+            setRouteUser(loginInput.username);
           } else {
             alert(data.message);
           }

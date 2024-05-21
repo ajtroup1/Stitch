@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/Create.css";
+import Cookies from "js-cookie";
 
 function Create() {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [desc, setDesc] = useState("");
+  const navigate = useNavigate();
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -16,6 +20,43 @@ function Create() {
 
   const handlePrivateChange = (event) => {
     setIsPrivate(!isPrivate);
+  };
+
+  const handleDescChange = (event) => {
+    setDesc(event.target.value);
+  };
+
+  const postStory = (e) => {
+    e.preventDefault()
+    
+      const dict = {
+        "title": title,
+        "text": text,
+        "is_private": isPrivate,
+        "description": desc,
+        "userID": Cookies.get('username')
+      }
+
+    fetch(`http://127.0.0.1:8000/api/initialize-story`, {
+      method: "POST",
+      body: JSON.stringify(dict),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            alert("Successfully created story!");
+            navigate('/profile')
+          } else {
+            alert(data.message);
+          }
+        });
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
   };
 
   return (
@@ -53,7 +94,9 @@ function Create() {
                     Private
                   </label>
                 </div>
-                <button className="btn btn-primary">Save</button>
+                <button className="btn btn-primary" onClick={(e) => {postStory(e)}}>
+                  Save
+                </button>
               </form>
             </div>
           </div>
@@ -66,6 +109,18 @@ function Create() {
                     aria-label="With textarea"
                     value={text}
                     onChange={handleTextChange}
+                    id="story-box"
+                  ></textarea>
+                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="desc-container">Describe your story:</label>
+                <div className="input-group" id="desc-container">
+                  <textarea
+                    className="form-control"
+                    aria-label="With textarea"
+                    value={desc}
+                    onChange={handleDescChange}
                   ></textarea>
                 </div>
               </div>

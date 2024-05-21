@@ -3,7 +3,9 @@ from .views import *
 
 urlpatterns = [
     path('users', GetUsers.as_view()),
+    # path('user-count', GetNumUsers.as_view()),
     path('users/<str:username>', GetUserByName.as_view()),
+    path('edit-user/<int:id>', EditUser.as_view()),
     path('create-user', CreateUser.as_view()),
     path('validate-user', ValidateUser.as_view()),
     path('delete-user/<int:id>', DeleteUser.as_view()),
@@ -15,7 +17,6 @@ urlpatterns = [
     path('3-user-stories/<int:id>', Get3UserStories.as_view()),
 
     # only for development delete later
-    path('flush-fragments', FlushFragments.as_view()),
     path('delete-fragment/<int:id>', DeleteFragment.as_view()),
     path('flush-stories', FlushStories.as_view()),
 ]
