@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/Browse.css";
+import Cookies from "js-cookie";
 
 function Browse() {
+  const navigate = useNavigate()
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [topStories, setTopStories] = useState([
@@ -53,6 +56,11 @@ function Browse() {
     } else {
       return description; // Return the original description if it's shorter than the maximum length
     }
+  }
+
+  const goToStory = (id) => {
+    Cookies.set("storyID", id)
+    navigate("/story")
   }
 
   return (
@@ -109,7 +117,7 @@ function Browse() {
                             }
                           </td>
                           <td>
-                            <a className="link">Link</a>
+                            <a className="link" onClick={() => {goToStory(story.id)}}>Link</a>
                           </td>
                         </tr>
                       ))}

@@ -151,6 +151,15 @@ class GetStories(APIView):
             serializer = StorySerializer(stories, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
+class GetStoryID(APIView):
+    def get(self, request, id):
+        story = Story.objects.filter(id=id).first()
+        if not story:
+            return Response({f"No story with id {id}"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            serializer = StorySerializer(story)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
 class GetUserStories(APIView):
     def get(self, request, user):
         fragments = Fragment.objects.filter(user=user)

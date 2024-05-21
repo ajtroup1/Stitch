@@ -234,7 +234,13 @@ function Profile() {
                 />
               )}
               <div className="story-title">
-                {threeStories.length > 0 && threeStories[0].title}
+                {threeStories.length > 0 && (
+                  <p>
+                    {threeStories[0].title.length > 20
+                      ? threeStories[0].title.slice(0, 24) + "..."
+                      : threeStories[0].title}
+                  </p>
+                )}
                 {threeStories.length === 0 && (
                   <p>Create stories to get started!</p>
                 )}
@@ -267,7 +273,13 @@ function Profile() {
                 />
               )}
               <div className="story-title">
-                {threeStories.length > 1 && threeStories[1].title}
+                {threeStories.length > 1 && (
+                  <p>
+                    {threeStories[1].title.length > 20
+                      ? threeStories[1].title.slice(0, 24) + "..."
+                      : threeStories[1].title}
+                  </p>
+                )}
               </div>
               <div className="story-text-container">
                 <div className="story-text">
@@ -292,7 +304,13 @@ function Profile() {
                 />
               )}
               <div className="story-title">
-                {threeStories.length > 2 && threeStories[2].title}
+                {threeStories.length > 2 && (
+                  <p>
+                    {threeStories[2].title.length > 20
+                      ? threeStories[2].title.slice(0, 24) + "..."
+                      : threeStories[2].title}
+                  </p>
+                )}
               </div>
               <div className="story-text-container">
                 <div className="story-text">

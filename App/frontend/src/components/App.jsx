@@ -7,6 +7,7 @@ import Login from "./Login.jsx";
 import Profile from "./Profile.jsx";
 import Browse from "./Browse.jsx";
 import Create from "./Create.jsx";
+import Story from "./Story.jsx";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(Cookies.get("loggedIn"));
@@ -89,6 +90,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/create" element={<Create />} />
+          <Route path="/story" element={<Story />} />
         </Routes>
 
         <div className="container">

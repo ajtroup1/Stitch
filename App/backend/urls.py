@@ -12,6 +12,7 @@ urlpatterns = [
     path('initialize-story', InitializeStory.as_view()),
     path('append-story/<int:id>', AppendStory.as_view(), name='append-story'),
     path('stories', GetStories.as_view()),
+    path('story/<int:id>', GetStoryID.as_view()),
     path('fragments', GetFragments.as_view()),
     path('user-stories/<str:user>', GetUserStories.as_view()),
     path('3-user-stories/<int:id>', Get3UserStories.as_view()),
