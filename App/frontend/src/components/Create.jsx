@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Create.css";
 import Cookies from "js-cookie";
 
 function Create() {
+  const [good2go, setGood2Go] = useState(false)
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [desc, setDesc] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(Cookies.get('loggedIn') == "false") {
+      navigate('/login')
+    }
+  })
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -61,7 +68,6 @@ function Create() {
 
   return (
     <>
-      <div style={{ paddingTop: "5.5%" }}></div>
       <div className="create-main">
         <div className="create-container">
           <div className="create-top-container">

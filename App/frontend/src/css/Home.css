@@ -1,0 +1,49 @@
+.home-top {
+  display: flex;
+  justify-content: center;
+  padding-top: 1%;
+  background-color: rgb(109, 109, 228);
+}
+
+#top-background-img {
+  width: 80%;
+  height: auto;
+  margin: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-middle-container {
+  width: 100%;
+  background-color: rgb(109, 109, 228);
+  height: 300px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.home-middle-left,
+.home-middle-right {
+  width: 45%;
+  height: 90%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  padding: 10px;
+}
+
+#stitch-icon {
+  height: auto;
+  width: 125px;
+  margin: 0 auto;
+  margin-top: -15px;
+  margin-bottom: 10px;
+}

@@ -29,35 +29,35 @@
   text-align: center;
 }
 
-.story-text-container-2{
-    margin: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+.story-text-container-2 {
+  margin: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .edit-story-area {
-    width: 95%;
-    height: 50%;
+  width: 95%;
+  height: 50%;
 }
 
 .edit-bottom-right-container {
-    width: 95%;
-    height: 30%;
-    margin-top: 1.5%;
-    display: flex;
-    justify-content: center;
+  width: 95%;
+  height: 30%;
+  margin-top: 1.5%;
+  display: flex;
+  justify-content: center;
 }
 
 .edit-bottom-right-right,
 .edit-bottom-right-left {
-    width: 50%;
-    height: 100%;
-    display: flex;
+  width: 50%;
+  height: 100%;
+  display: flex;
 }
 
 .edit-bottom-right-right {
-    justify-content: center;
-    align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 .edit-bottom-right-right textarea {
   width: 100%; /* Adjust width as needed */
@@ -66,17 +66,41 @@
 }
 
 .edit-bottom-right-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .bottom-lower-left {
-    display: flex;
-    justify-content: space-evenly;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .edit-story-area textarea {
-    height: 300px;
+  height: 300px;
+}
+
+#trash-icon {
+  height: 40px;
+  width: auto;
+  position: absolute;
+  right: 5%;
+  margin-top: 1.5%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#trash-icon:hover {
+    cursor: pointer;
+    transform: scale(1.4); /* Scale the icon on hover */
+}
+
+.delete-btns {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#delete-btn {
+    width: 200px;
+    margin: 10px;
 }

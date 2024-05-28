@@ -8,11 +8,6 @@
   /* background-color: rgb(183, 227, 242); */
 }
 
-#background-img {
-  width: 100%;
-  height: auto;
-}
-
 .navbar {
   position: fixed;
   top: 0;
@@ -72,7 +67,13 @@
   width: auto;
   border-radius: 100px;
   margin-left: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+#profile-img:hover {
+  transform: scale(1.4); 
+  border-radius: 15px;
+}
+
 #nav-title {
   font-size: 35px; /* Increase font size */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for depth */
@@ -98,6 +99,11 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for depth */
   letter-spacing: 2px;
   margin: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#nav-subtitle:hover {
+    cursor: pointer;
+    transform: scale(1.2); /* Scale the icon on hover */
 }
 
 #title {

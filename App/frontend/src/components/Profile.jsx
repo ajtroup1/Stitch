@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 function Profile() {
   const navigate = useNavigate();
 
+  const [good2go, setGood2Go] = useState(false);
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [threeStories, setThreeStories] = useState([]);
@@ -23,6 +24,15 @@ function Profile() {
   };
 
   useEffect(() => {
+    const loggedIn = Cookies.get("loggedIn");
+    if (loggedIn == "false") {
+      navigate("/login");
+    } else {
+      setGood2Go(true);
+    }
+  });
+
+  useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/users/${Cookies.get("username")}`, {
       method: "GET",
       headers: {
@@ -33,8 +43,9 @@ function Profile() {
         response.json().then((data) => {
           if (response.status === 200) {
             setUser(data);
+            setEditInfo(data)
             setLoading(false);
-            Cookies.set("picURL", data.pic_url)
+            Cookies.set("picURL", data.pic_url);
           } else {
             alert(data.message);
           }
@@ -43,7 +54,7 @@ function Profile() {
       .catch((error) => {
         console.log("Error: ", error);
       });
-  }, []);
+  }, [good2go]);
 
   useEffect(() => {
     if (user && user.id) {
@@ -76,10 +87,11 @@ function Profile() {
   const navToBrowse = () => {
     navigate("/browse");
   };
-  const navToEdit = () => {
-    Cookies.set("editingStory", true)
-    navigate("/editstory")
-  }
+  const navToEdit = (id) => {
+    Cookies.set("editingStory", true);
+    Cookies.set("storyID", id);
+    navigate("/editstory");
+  };
 
   const openModal = () => {
     setModalOpen(true);
@@ -118,6 +130,10 @@ function Profile() {
       });
   };
 
+  const capitalizeName = (name) => {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
   return loading ? (
     <p>Loading</p>
   ) : (
@@ -128,17 +144,36 @@ function Profile() {
             <div className="profile-img-container">
               {user.pic_url == "" ? (
                 <img
-                  className="profile-img"
+                  className={`profile-img ${
+                    user.user_rank === 1
+                      ? "gold"
+                      : user.user_rank === 2
+                      ? "silver"
+                      : user.user_rank === 3
+                      ? "bronze"
+                      : ""
+                  }`}
                   src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
                 />
               ) : (
-                <img className="profile-img" src={user.pic_url} />
+                <img
+                  className={`profile-img ${
+                    user.user_rank === 1
+                      ? "gold"
+                      : user.user_rank === 2
+                      ? "silver"
+                      : user.user_rank === 3
+                      ? "bronze"
+                      : ""
+                  }`}
+                  src={user.pic_url}
+                />
               )}
             </div>
             <div style={{ marginTop: "2%" }}></div>
             <p id="title">{user.username}</p>
             <p id="subtitle">
-              {user.firstname} {user.lastname}
+              {capitalizeName(user.firstname)} {capitalizeName(user.lastname)}
             </p>
             <div className="user-stats">
               <div style={{ paddingTop: "10%" }}></div>
@@ -169,8 +204,7 @@ function Profile() {
                   stories
                 </p>
               )}
-
-              <p id="subtitle">#X user in the world</p>
+              <p id="subtitle">#{user.user_rank} user in the world</p>
             </div>
             <button id="logout-btn" className="btn btn-danger" onClick={logout}>
               Log out
@@ -181,7 +215,7 @@ function Profile() {
           </div>
         </div>
         <div className="right-container">
-          <div style={{ paddingTop: "9%" }}></div>
+          <div style={{ paddingTop: "2%" }}></div>
           <div className="top-container">
             <p id="subtitle" style={{ marginTop: "1%" }}>
               There are currently {user.num_users} users creating right now!
@@ -236,7 +270,9 @@ function Profile() {
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/2280/2280532.png"
                   id="edit-story"
-                  onClick={navToEdit}
+                  onClick={() => {
+                    navToEdit(threeStories[0].id);
+                  }}
                 />
               )}
               <div className="story-title">
@@ -282,7 +318,9 @@ function Profile() {
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/2280/2280532.png"
                   id="edit-story"
-                  onClick={navToEdit}
+                  onClick={() => {
+                    navToEdit(threeStories[1].id);
+                  }}
                 />
               )}
               <div className="story-title">
@@ -320,7 +358,9 @@ function Profile() {
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/2280/2280532.png"
                   id="edit-story"
-                  onClick={navToEdit}
+                  onClick={() => {
+                    navToEdit(threeStories[2].id);
+                  }}
                 />
               )}
               <div className="story-title">

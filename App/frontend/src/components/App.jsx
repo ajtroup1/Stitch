@@ -9,6 +9,7 @@ import Browse from "./Browse.jsx";
 import Create from "./Create.jsx";
 import Story from "./Story.jsx";
 import EditStory from "./EditStory.jsx";
+import MyStories from "./MyStories.jsx";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(Cookies.get("loggedIn"));
@@ -26,20 +27,13 @@ function App() {
     };
   }, [loggedIn]);
 
-  useEffect(() => {
-    console.log(loggedIn)
-  }, [loggedIn]);
+  // useEffect(() => {
+  //   console.log(loggedIn)
+  // }, [loggedIn]);
 
   return (
     <Router>
       <div className="main">
-        {location.pathname === "/" && (
-          <img
-            src={"../src/assets/sketch-background.jpg"}
-            id="background-img"
-            alt="Background"
-          />
-        )}
         <nav>
           <div className="navbar">
             <div className="left-nav">
@@ -56,6 +50,11 @@ function App() {
               <a href="/create">
                 <p id="nav-subtitle">Create</p>
               </a>
+              {loggedIn == "true" && (
+                <a href="/mystories">
+                  <p id="nav-subtitle">My stories</p>
+                </a>
+              )}
             </div>
             <div id="right-nav">
               {loggedIn === "true" ? (
@@ -64,10 +63,14 @@ function App() {
                     <p id="nav-subtitle">{Cookies.get("username")}</p>
                   </a>
                   <a href="/profile">
-                    <img
-                      src={Cookies.get("picURL")}
-                      id="profile-img"
-                    />
+                    {Cookies.get("picURL") ? (
+                      <img src={Cookies.get("picURL")} id="profile-img" />
+                    ) : (
+                      <img
+                        src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+                        id="profile-img"
+                      />
+                    )}
                   </a>
                 </div>
               ) : (
@@ -85,6 +88,8 @@ function App() {
           </div>
         </nav>
 
+        <div style={{ paddingBottom: "5.5%" }}></div>
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -93,6 +98,7 @@ function App() {
           <Route path="/create" element={<Create />} />
           <Route path="/story" element={<Story />} />
           <Route path="/editstory" element={<EditStory />} />
+          <Route path="/mystories" element={<MyStories />} />
         </Routes>
 
         <div className="container">
@@ -110,7 +116,7 @@ function App() {
 
             <ul className="nav col-md-4 justify-content-end">
               <li className="nav-item">
-                <a href="#" className="nav-link px-2 text-body-secondary">
+                <a href="/" className="nav-link px-2 text-body-secondary">
                   Home
                 </a>
               </li>

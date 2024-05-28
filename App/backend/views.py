@@ -15,15 +15,18 @@ class GetUsers(APIView):
         else:
             serializer = UserSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
+def rank_users_by_stories(id):
+    users = User.objects.all()
 
-# class GetNumUsers(APIView):
-#     def get(self, request):
-#         users = User.objects.all()
-#         if not users:
-#             return Response({"No users"}, status=status.HTTP_204_NO_CONTENT)
-#         else:
-#             count = len(users)
-#             return Response({"Users": count}, status=status.HTTP_200_OK)
+    # Sort users by the number of stories in descending order
+    ranked_users = sorted(users, key=lambda user: user.story_set.count(), reverse=True)
+
+    # Find the index of the user with the specified ID
+    for index, user in enumerate(ranked_users):
+        if user.id == id:
+            return index + 1
+
         
 class GetUserByName(APIView):
     def get(self, request, username):
@@ -38,7 +41,10 @@ class GetUserByName(APIView):
             else:
                 stories_count = 0
             
-            serializer = UserSerializer(user, context={'stories_count': stories_count, 'num_users': len(users)})
+            # Calculate user rank
+            user_rank = rank_users_by_stories(user.id)
+            
+            serializer = UserSerializer(user, context={'stories_count': stories_count, 'num_users': len(users), 'user_rank': user_rank})
             return Response(serializer.data, status=status.HTTP_200_OK)
         
 class EditUser(APIView):
@@ -152,7 +158,7 @@ class GetStories(APIView):
         if not nonprivate_stories:
             return Response({"No non-private stories"}, status=status.HTTP_204_NO_CONTENT)
         else:
-            serializer = StorySerializer(nonprivate_stories, many=True)
+            serializer = StorySerializer(nonprivate_stories , many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
 class GetStoryID(APIView):
@@ -311,3 +317,47 @@ class AppendStory(APIView):
             # Return the serialized data of the new story
             new_story_serializer = StorySerializer(new_story)
             return Response({"Appended story": new_story_serializer.data}, status=status.HTTP_200_OK)
+
+class EditStory(APIView):
+    def post(self, request, id):
+        text = request.data.get('text')
+        title = request.data.get('title')
+        description = request.data.get('description')
+        private = request.data.get('private')
+
+        story = Story.objects.filter(id=id).first()
+        if not story:
+            return Response({"message":"Story not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        latest_frag = story.fragments.last()
+
+        latest_frag.text = text
+        story.title = title
+        story.description = description
+        story.private = private
+
+        print(story.description)
+
+        latest_frag.save()
+        story.save()
+        
+        return Response({"message":"Edited story"}, status=status.HTTP_200_OK)
+    
+class DeleteStory(APIView):
+    def delete(self, request, id):
+        story = Story.objects.filter(id=id).first()
+
+        if not story:
+            return Response({"message":"Story not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        story_fragments = []
+
+        fragments = Fragment.objects.all()
+
+        for frag in fragments:
+            if frag.story_id == story.id:
+                frag.delete()
+        
+        story.delete()
+
+        return Response({"message":"Deleted story"}, status=status.HTTP_204_NO_CONTENT)

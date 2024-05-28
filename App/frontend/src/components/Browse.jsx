@@ -4,27 +4,36 @@ import "../css/Browse.css";
 import Cookies from "js-cookie";
 
 function Browse() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [topStories, setTopStories] = useState([
-    {
-      title: "title1",
-      description: "desc1",
-      og_author: "author1",
-    },
-    {
-      title: "title1",
-      description: "desc1",
-      og_author: "author1",
-    },
-    {
-      title: "title1",
-      description: "desc1",
-      og_author: "author1",
-    },
-  ]);
-  const [filterOptions, setFilterOptions] = useState({});
+  const [filters, setFilters] = useState({
+    username: "",
+    original: false,
+  });
+
+  const handleOriginalChange = (event) => {
+    setFilters({ ...filters, original: event.target.checked });
+  };
+
+  const handleUsernameChange = (event) => {
+    setFilters({ ...filters, username: event.target.value });
+  };
+
+  const filteredData = stories.filter((item) => {
+    if (filters.original && item.fragments.length !== 1) {
+      return false;
+    }
+    if (
+      filters.username !== "" &&
+      item.fragments[item.fragments.length - 1].user.username !==
+        filters.username
+    ) {
+      console.log(item.fragments[item.fragments.length - 1].user.username);
+      return false;
+    }
+    return true;
+  });
 
   useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/stories`, {
@@ -36,8 +45,12 @@ function Browse() {
       .then((response) => {
         response.json().then((data) => {
           if (response.status === 200) {
-            setStories(data);
-            console.log(data);
+            // Sort the data by most recent date modified
+            const sortedData = data.sort(
+              (a, b) => new Date(b.date_modified) - new Date(a.date_modified)
+            );
+            setStories(sortedData);
+            console.log(sortedData);
             setLoading(false);
           } else {
             alert(data.message);
@@ -49,6 +62,7 @@ function Browse() {
       });
   }, []);
 
+
   function wrapDescription(description) {
     const maxLength = 50; // Adjust the maximum length as needed
     if (description.length > maxLength) {
@@ -58,10 +72,11 @@ function Browse() {
     }
   }
 
-  const goToStory = (id) => {
-    Cookies.set("storyID", id)
-    navigate("/story")
-  }
+  const navToEdit = (id) => {
+    Cookies.set("storyID", id);
+    Cookies.set("editingStory", true);
+    navigate("/editstory");
+  };
 
   return (
     <>
@@ -69,60 +84,94 @@ function Browse() {
         <p>Loading</p>
       ) : (
         <>
-          <div style={{ paddingTop: "5.4%" }}></div>
           <div className="browser-main">
-            <div className="top-half">
-              <div className="top-left-container">
-                <p id="subtitle" style={{ marginTop: "2%" }}>
-                  This week's top 3 stories
+            <div className="left-browse">
+              <div className="filter-container">
+                <p id="subtitle">Filters</p>
+                <form>
+                  <div className="mb-3">
+                    <label htmlFor="username" className="form-label">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={filters.username}
+                      onChange={handleUsernameChange}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="original" className="form-label">
+                      Original Story
+                    </label>
+                    <input
+                      type="checkbox"
+                      id="original"
+                      name="original"
+                      checked={filters.original}
+                      onChange={handleOriginalChange}
+                      className="form-checkbox"
+                    />
+                  </div>
+                </form>
+              </div>
+              <div className="browse-bottom-container">
+                <img src="../src/assets/stitch-icon.png" id="stitch-icon" />
+                <p id="title" style={{ marginTop: "-4%" }}>
+                  Stitch
                 </p>
-                <div className="top-stories-container">
-                  {topStories.map((story, key) => (
-                    <div key={key} className="story-indiv">
-                      <p>{`${story.title}`}</p>
-                      <p>{`${story.description}`}</p>
-                      <p>{`Original author: ${story.og_author}`}</p>
+              </div>
+            </div>
+            <div className="right-browse">
+              <div className="inner-stories-container-browse">
+                <div className="stories-container">
+                  {filteredData.map((story, index) => (
+                    <div className="story1-browse" key={index}>
+                      <img
+                        src="../src/assets/notepad.png"
+                        id="notepad-img"
+                        alt="Notepad"
+                      />
+                      <img
+                        src="https://cdn-icons-png.flaticon.com/512/2280/2280532.png"
+                        id="edit-story"
+                        alt="Edit"
+                        onClick={() => {
+                          navToEdit(story.id);
+                        }}
+                      />
+                      <div className="story-title" style={{ marginTop: "-2%" }}>
+                        <p>
+                          {story.title.length > 10
+                            ? story.title.slice(0, 14) + "..."
+                            : story.title}
+                        </p>
+                        {story.private && (
+                          <img
+                            src="https://static.thenounproject.com/png/1694941-200.png"
+                            id="private-icon"
+                            alt="Private"
+                          />
+                        )}
+                      </div>
+                      <div className="story-text-container">
+                        <div className="story-text">
+                          {story.fragments.map((fragment, index) => (
+                            <div
+                              key={fragment.id.toString() + index.toString()}
+                            >
+                              <p className="story-username">
+                                {fragment.user.username}:
+                              </p>
+                              <p>{fragment.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   ))}
-                </div>
-              </div>
-              <div className="top-right-container"></div>
-            </div>
-            <div className="bottom-half">
-              <div className="bottom-inner-container">
-                <div className="filter-container"></div>
-                <div className="table-container">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Title</th>
-                        <th colSpan={2}>Description</th>
-                        <th>Rating</th>
-                        <th>Original author</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {stories.map((story, key) => (
-                        <tr key={key}>
-                          <td>{story.title}</td>
-                          <td colSpan={2}>
-                            {wrapDescription(story.description)}
-                          </td>
-                          <td>XXXXXX</td>
-                          <td>
-                            {
-                              story.fragments[story.fragments.length - 1].user
-                                .username
-                            }
-                          </td>
-                          <td>
-                            <a className="link" onClick={() => {goToStory(story.id)}}>Link</a>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
                 </div>
               </div>
             </div>

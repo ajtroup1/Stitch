@@ -4,9 +4,19 @@ import "../css/Story.css";
 import Cookies from "js-cookie";
 
 function Story() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [good2go, setGood2Go] = useState(false);
   const [story, setStory] = useState({});
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storyID = Cookies.get("storyID");
+    if (!storyID) {
+      navigate("/browse");
+    } else {
+      setGood2Go(true);
+    }
+  });
 
   useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/story/${Cookies.get("storyID")}`, {
@@ -29,12 +39,12 @@ function Story() {
       .catch((error) => {
         console.log("Error: ", error);
       });
-  }, []);
+  }, [good2go]);
 
   const handleNavToEditStory = () => {
-    Cookies.set("editing", false)
-    navigate("/editstory")
-  }
+    Cookies.set("editing", false);
+    navigate("/editstory");
+  };
 
   return (
     <>
@@ -42,10 +52,14 @@ function Story() {
         <p>Loading</p>
       ) : (
         <div className="story-main">
-          <div style={{ paddingTop: "2%" }}></div>
+          <div style={{ marginTop: "-4%" }}></div>
           <div className="top-half-2">
             <div className="top-left">
-              <p id="title">{story.title}</p>
+              <p id="title">
+                {story.title.length > 25
+                  ? story.title.slice(0, 29) + "..."
+                  : story.title}
+              </p>
               <div className="lower-top-left">
                 <div className="profile-photos">
                   <div className="profile-pics-container">
@@ -97,7 +111,11 @@ function Story() {
                   ))}
                 {story.fragments.length > 3 &&
                   `+${story.fragments.length - 3} more`}
-                <button className="btn btn-primary" id="add-part-btn" onClick={handleNavToEditStory}>
+                <button
+                  className="btn btn-primary"
+                  id="add-part-btn"
+                  onClick={handleNavToEditStory}
+                >
                   Add a fragment to this story!
                 </button>
               </div>

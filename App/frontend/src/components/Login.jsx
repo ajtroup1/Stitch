@@ -22,7 +22,7 @@ function Login() {
     if (routeUser) {
       Cookies.set("username", routeUser);
       Cookies.set("loggedIn", true);
-      navigate('/profile')
+      navigate("/profile");
     }
   }, [routeUser]);
 
@@ -88,9 +88,19 @@ function Login() {
       });
   };
 
+  const scrollToSignUp = () => {
+    console.log('jabsdb')
+    const windowHeight = window.innerHeight;
+    const scrollDistance = windowHeight * 0.25; // Scroll down 25% of the window height
+    window.scrollTo({
+      top: scrollDistance,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className="login-main">
-      <div style={{ paddingTop: "10%" }}></div>
+      <div style={{ paddingTop: "2%" }}></div>
       <div className="login-container">
         <p id="title">Log in</p>
         <div className="form-container">
@@ -125,60 +135,41 @@ function Login() {
             <button type="submit" className="btn btn-primary" id="login-btn">
               Login
             </button>
-            <p id="signup-link">Don't have an account?</p>
+            <p id="signup-link" onClick={scrollToSignUp}>
+              Don't have an account? Sign up below!
+            </p>
           </form>
         </div>
       </div>
 
       <div className="login-mid">
-        <img
-          id="user-img-1"
-          src="https://media.istockphoto.com/id/1416048929/photo/woman-working-on-laptop-online-checking-emails-and-planning-on-the-internet-while-sitting-in.jpg?s=612x612&w=0&k=20&c=mt-Bsap56B_7Lgx1fcLqFVXTeDbIOILVjTdOqrDS54s="
-        />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="50"
-          height="50"
-          fill="green"
-          className="bi bi-journals"
-          viewBox="0 0 16 16"
-          id="paper1"
-        >
-          <path d="M5 0h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2 2 2 0 0 1-2 2H3a2 2 0 0 1-2-2h1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1H1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v9a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1H3a2 2 0 0 1 2-2" />
-          <path d="M1 6v-.5a.5.5 0 0 1 1 0V6h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V9h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 2.5v.5H.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H2v-.5a.5.5 0 0 0-1 0" />
-        </svg>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="50"
-          height="50"
-          fill="purple"
-          className="bi bi-journal"
-          viewBox="0 0 16 16"
-          id="paper2"
-        >
-          <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
-          <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
-        </svg>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="50"
-          height="50"
-          fill="yellow"
-          className="bi bi-journal-bookmark"
-          viewBox="0 0 16 16"
-          id="paper3"
-        >
-          <path
-            fillRule="evenodd"
-            d="M6 8V1h1v6.117L8.743 6.07a.5.5 0 0 1 .514 0L11 7.117V1h1v7a.5.5 0 0 1-.757.429L9 7.083 6.757 8.43A.5.5 0 0 1 6 8"
+        <div className="left-third">
+          <p id="title" className="login-title">
+            Create a story
+          </p>
+          <img
+            src="https://cdn-icons-png.freepik.com/256/708/708739.png?semt=ais_hybrid"
+            id="login-info-img"
           />
-          <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
-          <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
-        </svg>
-        <img
-          id="user-img-2"
-          src="https://img.freepik.com/premium-photo/man-lying-down-bed-with-computer_153437-2972.jpg"
-        />
+        </div>
+        <div className="middle-third">
+          <p id="title" className="login-title">
+            OR Find a story
+          </p>
+          <img
+            src="https://www.svgrepo.com/show/181800/library-book.svg"
+            id="login-info-img"
+          />
+        </div>
+        <div className="right-third">
+          <p id="title" className="login-title">
+            And collaborate!
+          </p>
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/809/809522.png"
+            id="login-info-img"
+          />
+        </div>
       </div>
 
       <div style={{ marginTop: "5%" }}></div>

@@ -9,6 +9,10 @@ class User(models.Model):
     lastname = models.CharField(max_length=50, null=False)
     pic_url = models.CharField(max_length=250, null=False, default="")
 
+    @property
+    def stories_count(self):
+        return self.story_set.count()
+
 class Fragment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(null=False)
